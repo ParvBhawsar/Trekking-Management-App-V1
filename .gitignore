@@ -4,3 +4,4 @@ venv/
 .venv/
 instance/*.db
 .pytest_cache/
+.vscode/
