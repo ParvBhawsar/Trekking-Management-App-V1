@@ -1,3 +1,0 @@
-AI/LLM DECLARATION - DRAFT
-
-AI/LLM tools were used for planning the application structure, generating an initial learning scaffold, explaining Flask concepts, suggesting validation logic, debugging, and drafting documentation. The final student is expected to review, test, modify and understand every submitted component. All AI/LLM usage should be declared according to the course's official declaration format.
