@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7"><div class="card shadow-sm"><div class="card-body p-4">
+<h1 class="h3">Edit Profile</h1>
+<form method="post"><div class="mb-3"><label class="form-label">Name</label><input class="form-control" name="name" value="{{ current_user.name }}" required></div><div class="mb-3"><label class="form-label">Email</label><input class="form-control" value="{{ current_user.email }}" disabled></div><div class="mb-3"><label class="form-label">Phone</label><input class="form-control" name="phone" value="{{ current_user.phone or '' }}"></div><button class="btn btn-success">Save Profile</button></form>
+</div></div></div></div>
+{% endblock %}

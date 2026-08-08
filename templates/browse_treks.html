@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Browse Treks{% endblock %}
+{% block content %}
+<h1 class="h2">Browse Open Treks</h1>
+<div class="card shadow-sm mb-4"><div class="card-body"><form class="row g-2" method="get">
+<div class="col-md-4"><input class="form-control" name="q" value="{{ query }}" placeholder="Search name or location"></div>
+<div class="col-md-3"><select class="form-select" name="difficulty"><option value="">All difficulties</option>{% for item in difficulties %}<option value="{{ item }}" {% if selected_difficulty == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+<div class="col-md-3"><input class="form-control" name="location" value="{{ selected_location }}" placeholder="Filter location"></div>
+<div class="col-md-2"><button class="btn btn-dark w-100">Filter</button></div>
+</form></div></div>
+<div class="row g-3">{% for trek in treks %}<div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+<div class="d-flex justify-content-between"><div><h2 class="h5">{{ trek.name }}</h2><p class="text-muted">{{ trek.location }}</p></div><span class="badge text-bg-success h-25">{{ trek.available_slots }} slots</span></div>
+<p>{{ trek.description or 'A guided trekking experience.' }}</p><div class="small mb-3"><strong>Difficulty:</strong> {{ trek.difficulty }} &nbsp; <strong>Duration:</strong> {{ trek.duration_days }} day(s)<br><strong>Dates:</strong> {{ trek.start_date.strftime('%d %b %Y') }} - {{ trek.end_date.strftime('%d %b %Y') }}</div>
+<a class="btn btn-sm btn-outline-dark" href="{{ url_for('trek_detail', trek_id=trek.id) }}">Details</a>
+{% if trek.id in booked_trek_ids %}<button class="btn btn-sm btn-secondary" disabled>Already Booked</button>{% elif trek.available_slots > 0 %}<form class="d-inline" method="post" action="{{ url_for('book_trek', trek_id=trek.id) }}"><button class="btn btn-sm btn-success">Book Trek</button></form>{% else %}<button class="btn btn-sm btn-secondary" disabled>Full</button>{% endif %}
+</div></div></div>{% else %}<p class="text-muted">No treks match your filters.</p>{% endfor %}</div>
+{% endblock %}

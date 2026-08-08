@@ -1,0 +1,50 @@
+body {
+    background: #f6f7f8;
+    color: #202528;
+}
+
+.hero-panel {
+    background: linear-gradient(135deg, #dff3e6, #eef7f1);
+    border: 1px solid #cde7d5;
+}
+
+.card {
+    border: 1px solid #e2e5e7;
+}
+
+.table th {
+    white-space: nowrap;
+    background: #f4f5f6;
+}
+
+.badge.status-open,
+.badge.status-booked,
+.badge.status-approved {
+    background: #198754;
+    color: white;
+}
+
+.badge.status-pending {
+    background: #ffc107;
+    color: #212529;
+}
+
+.badge.status-closed,
+.badge.status-cancelled {
+    background: #6c757d;
+    color: white;
+}
+
+.badge.status-started {
+    background: #fd7e14;
+    color: white;
+}
+
+.badge.status-completed {
+    background: #0d6efd;
+    color: white;
+}
+
+form.d-inline {
+    display: inline;
+}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-3">Login</h1>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+                    <button class="btn btn-dark w-100" type="submit">Login</button>
+                </form>
+                <hr>
+                <p class="small mb-1">New trekker? <a href="{{ url_for('register', role='user') }}">Register here</a></p>
+                <p class="small mb-0">New staff member? <a href="{{ url_for('register', role='staff') }}">Apply here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

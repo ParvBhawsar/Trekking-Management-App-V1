@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Participants{% endblock %}
+{% block content %}
+<h1 class="h2">Participants - {{ trek.name }}</h1>
+<p class="text-muted">View the participant list and update active booking status.</p>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Booking ID</th><th>Name</th><th>Contact</th><th>Booking date</th><th>Status</th><th>Manage</th></tr></thead><tbody>
+{% for booking in bookings %}<tr><td>#{{ booking.id }}</td><td>{{ booking.user.name }}</td><td>{{ booking.user.email }}<br>{{ booking.user.phone or '-' }}</td><td>{{ booking.booking_date.strftime('%d %b %Y') }}</td><td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td><td>{% if booking.status == 'Booked' %}<form method="post" action="{{ url_for('staff_update_booking_status', booking_id=booking.id) }}" class="d-flex gap-1"><button class="btn btn-sm btn-outline-primary" name="status" value="Completed">Complete</button><button class="btn btn-sm btn-outline-danger" name="status" value="Cancelled">Cancel</button></form>{% else %}-{% endif %}</td></tr>{% else %}<tr><td colspan="6" class="text-muted text-center py-4">No participants or booking history yet.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

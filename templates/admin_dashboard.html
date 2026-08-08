@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h2 mb-0">Admin Dashboard</h1>
+        <p class="text-muted mb-0">Overview of the entire trekking system.</p>
+    </div>
+    <a class="btn btn-success" href="{{ url_for('admin_create_trek') }}">Create Trek</a>
+</div>
+
+<div class="row g-3 mb-4">
+    {% for label, value in [('Treks', counts.treks), ('Users', counts.users), ('Staff', counts.staff), ('Bookings', counts.bookings)] %}
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">{{ label }}</div><div class="display-6 fw-semibold">{{ value }}</div></div></div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if counts.pending_staff %}
+<div class="alert alert-warning">{{ counts.pending_staff }} staff registration(s) are waiting for approval. <a href="{{ url_for('admin_staff') }}">Review now</a>.</div>
+{% endif %}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h5">Search treks, users or staff</h2>
+        <form class="row g-2" method="get">
+            <div class="col-md-10"><input class="form-control" name="q" value="{{ query }}" placeholder="Enter name, location or ID"></div>
+            <div class="col-md-2"><button class="btn btn-dark w-100">Search</button></div>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<div class="row g-3 mb-4">
+    <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h3 class="h6">Treks</h3>{% for item in trek_results %}<p class="small mb-2"><a href="{{ url_for('admin_edit_trek', trek_id=item.id) }}">#{{ item.id }} {{ item.name }}</a><br>{{ item.location }}</p>{% else %}<p class="text-muted small">No trek found.</p>{% endfor %}</div></div></div>
+    <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h3 class="h6">Users</h3>{% for item in user_results %}<p class="small mb-2">#{{ item.id }} {{ item.name }}<br>{{ item.email }}</p>{% else %}<p class="text-muted small">No user found.</p>{% endfor %}</div></div></div>
+    <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h3 class="h6">Staff</h3>{% for item in staff_results %}<p class="small mb-2">#{{ item.id }} {{ item.name }}<br>{{ item.email }}</p>{% else %}<p class="text-muted small">No staff found.</p>{% endfor %}</div></div></div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">Recent bookings</h2>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>ID</th><th>User</th><th>Trek</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for booking in recent_bookings %}
+                    <tr><td>#{{ booking.id }}</td><td>{{ booking.user.name }}</td><td>{{ booking.trek.name }}</td><td>{{ booking.booking_date.strftime('%d %b %Y') }}</td><td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td></tr>
+                {% else %}<tr><td colspan="5" class="text-muted">No bookings yet.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

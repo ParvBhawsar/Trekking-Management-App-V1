@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Trekker Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h1 class="h2 mb-0">Welcome, {{ current_user.name }}</h1><p class="text-muted mb-0">Explore open treks and manage your bookings.</p></div><a class="btn btn-success" href="{{ url_for('browse_treks') }}">Browse All Treks</a></div>
+<h2 class="h5">Available treks</h2>
+<div class="row g-3 mb-4">{% for trek in open_treks %}<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm"><div class="card-body"><h3 class="h5">{{ trek.name }}</h3><p class="text-muted">{{ trek.location }}</p><span class="badge text-bg-secondary">{{ trek.difficulty }}</span> <span class="badge text-bg-success">{{ trek.available_slots }} slots</span><p class="small mt-3">Starts {{ trek.start_date.strftime('%d %b %Y') }}</p><a class="btn btn-sm btn-outline-dark" href="{{ url_for('trek_detail', trek_id=trek.id) }}">View Details</a></div></div></div>{% else %}<p class="text-muted">No open treks available.</p>{% endfor %}</div>
+<h2 class="h5">Recent booking history</h2>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Trek</th><th>Date</th><th>Status</th></tr></thead><tbody>{% for booking in recent_bookings %}<tr><td>{{ booking.trek.name }}</td><td>{{ booking.booking_date.strftime('%d %b %Y') }}</td><td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td></tr>{% else %}<tr><td colspan="3" class="text-muted">You have no bookings yet.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

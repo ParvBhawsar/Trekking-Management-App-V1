@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<h1 class="h2">Manage Trekkers</h1>
+<form class="row g-2 mb-3" method="get"><div class="col-md-10"><input class="form-control" name="q" value="{{ query }}" placeholder="Search users by name, email or ID"></div><div class="col-md-2"><button class="btn btn-dark w-100">Search</button></div></form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0">
+<thead><tr><th>ID</th><th>User</th><th>Phone</th><th>Total bookings</th><th>Account</th><th>Action</th></tr></thead>
+<tbody>{% for user in users %}<tr><td>#{{ user.id }}</td><td><strong>{{ user.name }}</strong><br><span class="small text-muted">{{ user.email }}</span></td><td>{{ user.phone or '-' }}</td><td>{{ user.bookings|length }}</td><td>{% if user.blacklisted %}<span class="badge text-bg-danger">Blacklisted</span>{% else %}<span class="badge text-bg-success">Active</span>{% endif %}</td><td><form method="post" action="{{ url_for('admin_toggle_blacklist', user_id=user.id) }}"><button class="btn btn-sm btn-outline-danger">{{ 'Reactivate' if user.blacklisted else 'Blacklist' }}</button></form></td></tr>{% else %}<tr><td colspan="6" class="text-muted text-center py-4">No users found.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

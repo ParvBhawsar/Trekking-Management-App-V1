@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Update Trek{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7"><div class="card shadow-sm"><div class="card-body p-4">
+<h1 class="h3">Update {{ trek.name }}</h1>
+<p class="text-muted">You can update available slots and the current status.</p>
+<form method="post">
+<div class="mb-3"><label class="form-label">Available slots (maximum {{ trek.total_slots }})</label><input class="form-control" type="number" min="0" max="{{ trek.total_slots }}" name="available_slots" value="{{ trek.available_slots }}" required></div>
+<div class="mb-3"><label class="form-label">Trek status</label><select class="form-select" name="status">{% for item in statuses %}<option value="{{ item }}" {% if trek.status == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+<button class="btn btn-success">Save Changes</button><a class="btn btn-outline-secondary" href="{{ url_for('staff_dashboard') }}">Cancel</a>
+</form>
+</div></div></div></div>
+{% endblock %}
