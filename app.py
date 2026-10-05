@@ -80,7 +80,9 @@ def create_default_admin():
             name="System Admin",
             email="admin@trek.com",
             phone="9999999999",
-            password_hash=generate_password_hash("admin123"),
+            password_hash=generate_password_hash(
+                os.getenv("TREKMATE_ADMIN_PASSWORD") or secrets.token_urlsafe(24)
+            ),
             role="admin",
             approved=True,
             blacklisted=False,
