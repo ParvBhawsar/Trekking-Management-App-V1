@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from functools import wraps
 
 from flask import (
@@ -36,11 +36,17 @@ STAFF_TREK_STATUSES = ["Approved", "Open", "Started", "Closed", "Completed"]
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    os.makedirs(app.instance_path, exist_ok=True)
 
-    default_db_path = os.path.join(app.instance_path, "trekking.db")
+    if os.getenv("VERCEL"):
+        runtime_dir = "/tmp/trekmate"
+        os.makedirs(runtime_dir, exist_ok=True)
+        default_db_path = os.path.join(runtime_dir, "trekking.db")
+    else:
+        os.makedirs(app.instance_path, exist_ok=True)
+        default_db_path = os.path.join(app.instance_path, "trekking.db")
+
     app.config.from_mapping(
-        SECRET_KEY="simple-trekking-project-key",
+        SECRET_KEY=os.getenv("SECRET_KEY", "simple-trekking-project-key"),
         SQLALCHEMY_DATABASE_URI=f"sqlite:///{default_db_path}",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
@@ -54,6 +60,8 @@ def create_app(test_config=None):
     with app.app_context():
         db.create_all()
         create_default_admin()
+        if os.getenv("VERCEL"):
+            create_demo_data_if_empty()
 
     register_routes(app)
     register_error_handlers(app)
@@ -79,6 +87,98 @@ def create_default_admin():
         )
         db.session.add(admin)
         db.session.commit()
+
+
+def create_demo_data_if_empty():
+    """Seed a small demo dataset for ephemeral Vercel serverless instances."""
+    if Trek.query.first() is not None:
+        return
+
+    staff = User.query.filter_by(email="staff@trek.com").first()
+    if staff is None:
+        staff = User(
+            name="Aarav Guide",
+            email="staff@trek.com",
+            phone="9876543210",
+            password_hash=generate_password_hash("staff123"),
+            role="staff",
+            approved=True,
+            blacklisted=False,
+        )
+        db.session.add(staff)
+
+    pending_staff = User.query.filter_by(email="pending@trek.com").first()
+    if pending_staff is None:
+        pending_staff = User(
+            name="Meera Guide",
+            email="pending@trek.com",
+            phone="9876500000",
+            password_hash=generate_password_hash("staff123"),
+            role="staff",
+            approved=False,
+            blacklisted=False,
+        )
+        db.session.add(pending_staff)
+
+    trekker = User.query.filter_by(email="user@trek.com").first()
+    if trekker is None:
+        trekker = User(
+            name="Demo Trekker",
+            email="user@trek.com",
+            phone="9123456780",
+            password_hash=generate_password_hash("user123"),
+            role="user",
+            approved=True,
+            blacklisted=False,
+        )
+        db.session.add(trekker)
+
+    db.session.flush()
+    today = date.today()
+    treks = [
+        Trek(
+            name="Munnar Tea Trail",
+            location="Munnar, Kerala",
+            difficulty="Easy",
+            duration_days=2,
+            total_slots=15,
+            available_slots=14,
+            assigned_staff_id=staff.id,
+            status="Open",
+            start_date=today + timedelta(days=15),
+            end_date=today + timedelta(days=16),
+            description="A beginner-friendly trek through tea estates and viewpoints.",
+        ),
+        Trek(
+            name="Kodaikanal Forest Trek",
+            location="Kodaikanal, Tamil Nadu",
+            difficulty="Moderate",
+            duration_days=3,
+            total_slots=12,
+            available_slots=12,
+            assigned_staff_id=staff.id,
+            status="Open",
+            start_date=today + timedelta(days=30),
+            end_date=today + timedelta(days=32),
+            description="A moderate forest trail with camping and guided nature walks.",
+        ),
+        Trek(
+            name="Himalayan Ridge Challenge",
+            location="Manali, Himachal Pradesh",
+            difficulty="Hard",
+            duration_days=5,
+            total_slots=10,
+            available_slots=10,
+            status="Approved",
+            start_date=today + timedelta(days=60),
+            end_date=today + timedelta(days=64),
+            description="A demanding high-altitude trek for experienced participants.",
+        ),
+    ]
+    db.session.add_all(treks)
+    db.session.flush()
+    db.session.add(Booking(user_id=trekker.id, trek_id=treks[0].id, status="Booked"))
+    db.session.commit()
 
 
 def role_required(*roles):
